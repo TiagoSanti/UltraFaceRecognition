@@ -34,7 +34,10 @@ namespace UltraFaceRecognition
 
         public FaceInfo[] DetectFacesImagePath(string imagePath)
         {
-            return null;
+            using var frame = Cv2.ImRead(imagePath);
+            using var inMat = NcnnDotNet.Mat.FromPixels(frame.Data, NcnnDotNet.PixelType.Bgr2Rgb, frame.Cols, frame.Rows);
+
+            return ultraFace.Detect(inMat).ToArray();
         }
     }
 }

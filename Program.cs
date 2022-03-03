@@ -1,4 +1,5 @@
 ﻿using OpenCvSharp;
+using System.Drawing;
 using UltraFaceDotNet;
 
 namespace UltraFaceRecognition
@@ -66,7 +67,10 @@ namespace UltraFaceRecognition
                 string[] personImagesPath = Directory.GetFiles(personImageDBDir);
                 foreach (string personImagePath in personImagesPath)
                 {
-                    detector.DetectFacesImagePath(personImagePath);
+                    FaceInfo[] faceInfos = detector.DetectFacesImagePath(personImagePath);
+                    FaceInfo faceInfo = faceInfos[0];
+                    Bitmap bitmap = Helpers.CropImage(personImagePath, faceInfo);
+                    Helpers.OverwriteImage(bitmap, personImagePath);
                 }
             }
         }
