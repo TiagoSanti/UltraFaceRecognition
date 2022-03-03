@@ -15,16 +15,18 @@ namespace UltraFaceRecognition
             capture.StartCamera();
 
             //Console.WriteLine("Encode/Load menu");
-            StartEncodings(detector);
+            StartEncodings();
 
             //Console.WriteLine("Running recognition");
-            RunRealTimeRecognizer(capture, detector);
+            //RunRealTimeRecognizer(capture);
             
             return 0;
         }
 
-        private static void RunRealTimeRecognizer(Camera capture, FaceDetector detector)
+        private static void RunRealTimeRecognizer(Camera capture)
         {
+            FaceDetector detector = new();
+
             while (Window.WaitKey(10) != 27)
             {
                 //Console.WriteLine("Getting frame");
@@ -47,10 +49,12 @@ namespace UltraFaceRecognition
 
         public static void StartEncodings()
         {
+            FaceDetector detector = new();
             // enchance database images
-            EnchanceDatabaseImages();
+            detector.EnchanceDatabaseImages();
 
             // encode database enchanced images
+            Encoder.EncodeDatabaseImages();
 
             // load encodings
         }
@@ -67,10 +71,16 @@ namespace UltraFaceRecognition
                 string[] personImagesPath = Directory.GetFiles(personImageDBDir);
                 foreach (string personImagePath in personImagesPath)
                 {
-                    FaceInfo[] faceInfos = detector.DetectFacesImagePath(personImagePath);
-                    FaceInfo faceInfo = faceInfos[0];
-                    Bitmap bitmap = Helpers.CropImage(personImagePath, faceInfo);
-                    Helpers.OverwriteImage(bitmap, personImagePath);
+                    if (!personImagePath.Contains("_cropped"))
+                    {
+                        FaceInfo[] faceInfos = detector.DetectFacesImagePath(personImagePath);
+                        if (faceInfos != null)
+                        {
+                            FaceInfo faceInfo = faceInfos[0];
+                            Bitmap bitmap = Helpers.CropImage(personImagePath, faceInfo);
+                            Helpers.OverwriteImage(bitmap, personImagePath);
+                        }
+                    }
                 }
             }
         }

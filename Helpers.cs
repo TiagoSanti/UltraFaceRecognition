@@ -60,7 +60,7 @@ namespace UltraFaceRecognition
 
         public static Bitmap CropImage(string imageFilePath, FaceInfo faceInfo)
         {
-            Bitmap bitmap = Img.FromFile(imageFilePath) as Bitmap;
+            using Bitmap bitmap = Img.FromFile(imageFilePath) as Bitmap;
 
             int X1 = (int)faceInfo.X1;
             int Y1 = (int)faceInfo.Y1;
@@ -78,10 +78,8 @@ namespace UltraFaceRecognition
 
         internal static void OverwriteImage(Bitmap bitmap, string personImagePath)
         {
-            string fileName = Path.GetFileNameWithoutExtension(personImagePath);
-
             File.Delete(personImagePath);
-            bitmap.Save(fileName, System.Drawing.Imaging.ImageFormat.Jpeg);
+            bitmap.Save(personImagePath+"_cropped.png", System.Drawing.Imaging.ImageFormat.Png);
         }
     }
 }

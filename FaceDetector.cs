@@ -1,4 +1,5 @@
 ﻿using OpenCvSharp;
+using System.Drawing;
 using UltraFaceDotNet;
 
 namespace UltraFaceRecognition
@@ -38,6 +39,30 @@ namespace UltraFaceRecognition
             using var inMat = NcnnDotNet.Mat.FromPixels(frame.Data, NcnnDotNet.PixelType.Bgr2Rgb, frame.Cols, frame.Rows);
 
             return ultraFace.Detect(inMat).ToArray();
+        }
+
+        internal void EnchanceDatabaseImages()
+        {
+            string imageDatabaseDir = @".\database\images\";
+
+            string[] peopleImageDBDir = Directory.GetDirectories(imageDatabaseDir);
+            foreach (string personImageDBDir in peopleImageDBDir)
+            {
+                string[] personImagesPath = Directory.GetFiles(personImageDBDir);
+                foreach (string personImagePath in personImagesPath)
+                {
+                    if (!personImagePath.Contains("_cropped"))
+                    {
+                        FaceInfo[] faceInfos = DetectFacesImagePath(personImagePath);
+                        if (faceInfos != null)
+                        {
+                            FaceInfo faceInfo = faceInfos[0];
+                            Bitmap bitmap = Helpers.CropImage(personImagePath, faceInfo);
+                            Helpers.OverwriteImage(bitmap, personImagePath);
+                        }
+                    }
+                }
+            }
         }
     }
 }
