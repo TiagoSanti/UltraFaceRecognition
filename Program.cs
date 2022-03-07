@@ -14,7 +14,7 @@ namespace UltraFaceRecognition
 
 
             //Console.WriteLine("Starting camera");
-            capture.StartCamera();
+            //capture.StartCamera();
 
             //Console.WriteLine("Start python encoder instance");
             encoder.Test();

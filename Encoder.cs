@@ -4,6 +4,7 @@ using System.Drawing;
 using Img = System.Drawing.Image;
 using IronPython.Hosting;
 using Microsoft.Scripting.Hosting;
+using Python.Runtime;
 
 namespace UltraFaceRecognition
 {
@@ -17,19 +18,29 @@ namespace UltraFaceRecognition
 
         public Encoder()
         {
+            /*
             Engine = Python.CreateEngine();
             Scope = Engine.CreateScope();
-            Source = Engine.CreateScriptSourceFromFile(@"D:\Documentos\PROG\Github\TiagoSanti\UltraFaceRecognition\scripts\encoder.py");
-            Source.Execute(Scope);
-            EncoderPython = Scope.GetVariable("encoder");
-            EncoderInstance = Engine.Operations.CreateInstance(EncoderPython);
+            Source = Engine.CreateScriptSourceFromFile(@".\scripts\encoder.py");
+            ImportModules();
+            //Source.Execute(Scope);
+            //EncoderPython = Scope.GetVariable("encoder");
+            //EncoderInstance = Engine.Operations.CreateInstance(EncoderPython);
+            */
+        }
+
+        public void ImportModules()
+        {
+
         }
 
         public void Test()
         {
+            string envPythonHome = @"C:\Users\Tiago Santi\AppData\Local\Programs\Python\Python39\python39.dll";
+            Environment.SetEnvironmentVariable("PYTHONNET_PYDLL", envPythonHome, EnvironmentVariableTarget.Process);
+
             var imageTest = @".\database\images\Tiago Santi\1.jpg_cropped.png";
-            var result = EncoderInstance.read_image_from_path(imageTest);
-            result = EncoderInstance.
+            
         }
 
         public static void EncodeDatabaseImages()
@@ -114,7 +125,7 @@ namespace UltraFaceRecognition
 
         private static void EncodeImage(string personImage)
         {
-            
+
         }
     }
 }
