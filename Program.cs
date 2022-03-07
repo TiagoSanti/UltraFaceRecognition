@@ -1,8 +1,5 @@
 ﻿using OpenCvSharp;
-using System.Drawing;
 using UltraFaceDotNet;
-using Microsoft.ML;
-using IronPython.Hosting;
 
 namespace UltraFaceRecognition
 {
@@ -10,8 +7,9 @@ namespace UltraFaceRecognition
     {
         public void CallingPython()
         {
-            var engine = Python.CreateEngine();
-            var scope = engine.CreateScope();
+            Encoder encoder = new();
+
+            encoder.Execute();
         }
 
         public static int Main()

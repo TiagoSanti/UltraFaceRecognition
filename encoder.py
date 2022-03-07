@@ -2,7 +2,6 @@
 import cv2
 import numpy as np
 from skimage import transform as trans
-from traitlets.traitlets import This
 
 class Encoder:
     face_rec = ArcFace.ArcFace()
@@ -83,7 +82,7 @@ class Encoder:
 
 
     def image_encoding(img):
-        return This.face_rec.calc_emb(img)
+        return face_rec.calc_emb(img)
 
     def compare_encodings(encoding1, encoding2):
-        return This.face_rec.get_distance_embeddings(encoding1, encoding2)
+        return face_rec.get_distance_embeddings(encoding1, encoding2)

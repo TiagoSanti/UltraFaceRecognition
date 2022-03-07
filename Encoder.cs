@@ -2,11 +2,29 @@
 using Microsoft.AI.MachineLearning;
 using System.Drawing;
 using Img = System.Drawing.Image;
+using IronPython.Hosting;
+using Microsoft.Scripting.Hosting;
 
 namespace UltraFaceRecognition
 {
     public class Encoder
     {
+        public ScriptEngine engine;
+        public ScriptScope scope;
+        public ScriptSource source;
+
+        public Encoder()
+        {
+            engine = Python.CreateEngine();
+            scope = engine.CreateScope();
+            source = engine.CreateScriptSourceFromFile(@".\encoder.py");
+        }
+
+        public void Execute()
+        {
+            source.Execute(scope);
+        }
+
         public static void EncodeDatabaseImages()
         {
             string imageDatabaseDir = @".\database\images\";
