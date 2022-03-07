@@ -2,7 +2,7 @@
 
 namespace UltraFaceRecognition
 {
-    class Person
+    public class Person
     {
         public string Name { get; set; }
         public List<FaceEncoding>? FaceEncodings;

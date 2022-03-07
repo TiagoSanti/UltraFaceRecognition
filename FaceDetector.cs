@@ -4,7 +4,7 @@ using UltraFaceDotNet;
 
 namespace UltraFaceRecognition
 {
-    class FaceDetector
+    public class FaceDetector
     {
         public UltraFace? ultraFace;
         public string binPath = @".\ncnn\data\version-RFB\RFB-320.bin";
@@ -41,7 +41,7 @@ namespace UltraFaceRecognition
             return ultraFace.Detect(inMat).ToArray();
         }
 
-        internal void EnchanceDatabaseImages()
+        public void EnchanceDatabaseImages()
         {
             string imageDatabaseDir = @".\database\images\";
 

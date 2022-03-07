@@ -2,7 +2,7 @@
 
 namespace UltraFaceRecognition
 {
-    class Camera
+    public class Camera
     {
         public VideoCapture? Capture;
 
@@ -30,7 +30,7 @@ namespace UltraFaceRecognition
             }
         }
 
-        internal void ShowImage(Mat mat)
+        public void ShowImage(Mat mat)
         {
             if (IsStarted())
             {
@@ -41,7 +41,7 @@ namespace UltraFaceRecognition
             }
         }
 
-        internal void Close()
+        public static void Close()
         {
             Cv2.DestroyAllWindows();
         }
