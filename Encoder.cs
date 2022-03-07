@@ -9,20 +9,27 @@ namespace UltraFaceRecognition
 {
     public class Encoder
     {
-        public ScriptEngine engine;
-        public ScriptScope scope;
-        public ScriptSource source;
+        public ScriptEngine Engine;
+        public ScriptScope Scope;
+        public ScriptSource Source;
+        public dynamic EncoderPython;
+        public dynamic EncoderInstance;
 
         public Encoder()
         {
-            engine = Python.CreateEngine();
-            scope = engine.CreateScope();
-            source = engine.CreateScriptSourceFromFile(@"D:\Documentos\PROG\Github\TiagoSanti\UltraFaceRecognition\scripts\encoder.py");
+            Engine = Python.CreateEngine();
+            Scope = Engine.CreateScope();
+            Source = Engine.CreateScriptSourceFromFile(@"D:\Documentos\PROG\Github\TiagoSanti\UltraFaceRecognition\scripts\encoder.py");
+            Source.Execute(Scope);
+            EncoderPython = Scope.GetVariable("encoder");
+            EncoderInstance = Engine.Operations.CreateInstance(EncoderPython);
         }
 
-        public void Execute()
+        public void Test()
         {
-            source.Execute(scope);
+            var imageTest = @".\database\images\Tiago Santi\1.jpg_cropped.png";
+            var result = EncoderInstance.read_image_from_path(imageTest);
+            result = EncoderInstance.
         }
 
         public static void EncodeDatabaseImages()

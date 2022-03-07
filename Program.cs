@@ -10,13 +10,14 @@ namespace UltraFaceRecognition
             Camera? capture = new();
             FaceDetector detector = new();
             List<Person> people = new();
+            Encoder encoder = new();
 
 
             //Console.WriteLine("Starting camera");
             capture.StartCamera();
 
             //Console.WriteLine("Start python encoder instance");
-
+            encoder.Test();
 
             //Console.WriteLine("Encode/Load menu");
             people = StartEncodings(detector, people);

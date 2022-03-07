@@ -82,7 +82,7 @@ class Encoder:
 
 
     def image_encoding(img):
-        return face_rec.calc_emb(img)
+        return self.face_rec.calc_emb(img)
 
     def compare_encodings(encoding1, encoding2):
-        return face_rec.get_distance_embeddings(encoding1, encoding2)
+        return self.face_rec.get_distance_embeddings(encoding1, encoding2)
