@@ -20,10 +20,10 @@ namespace UltraFaceRecognition
             encoder.Test();
 
             //Console.WriteLine("Encode/Load menu");
-            people = StartEncodings(detector, people);
+            //people = StartEncodings(detector, people);
 
             //Console.WriteLine("Running recognition");
-            RunRealTimeRecognizer(capture, people);
+            //RunRealTimeRecognizer(capture, people);
             
             return 0;
         }

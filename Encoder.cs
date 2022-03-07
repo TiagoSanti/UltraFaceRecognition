@@ -36,11 +36,31 @@ namespace UltraFaceRecognition
 
         public void Test()
         {
-            string envPythonHome = @"C:\Users\Tiago Santi\AppData\Local\Programs\Python\Python39\python39.dll";
-            Environment.SetEnvironmentVariable("PYTHONNET_PYDLL", envPythonHome, EnvironmentVariableTarget.Process);
+            var imageTest = @"3.jpg_cropped.png";
 
-            var imageTest = @".\database\images\Tiago Santi\1.jpg_cropped.png";
-            
+            System.Diagnostics.ProcessStartInfo start = new("python.exe");
+            //python interprater location
+            start.WorkingDirectory = @"C:\Users\Tiago Santi\AppData\Local\Programs\Python\Python39";
+            //argument with file name and input parameters
+            start.Arguments = string.Format("{0} {1}", @".\scripts\encoder.py", imageTest);
+            start.UseShellExecute = false;// Do not use OS shell
+            start.CreateNoWindow = true; // We don't need new window
+            start.RedirectStandardError = true; // Any error in standard output will be redirected back (for example exceptions)
+            start.LoadUserProfile = true;
+
+            System.Diagnostics.Process process = new();
+            process.StartInfo = start;
+            process.StartInfo.RedirectStandardOutput = true;
+            process.Start();
+
+            using (StreamReader reader = process.StandardOutput)
+            {
+                string stderr = process.StandardError.ReadToEnd(); // Here are the exceptions from our Python script
+                string result = reader.ReadToEnd(); // Here is the result of StdOut(for example: print "test")
+                Console.WriteLine(stderr);
+                Console.WriteLine(result);
+            }
+            process.Close();
         }
 
         public static void EncodeDatabaseImages()
