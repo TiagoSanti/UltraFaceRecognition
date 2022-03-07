@@ -17,7 +17,7 @@ namespace UltraFaceRecognition
         {
             engine = Python.CreateEngine();
             scope = engine.CreateScope();
-            source = engine.CreateScriptSourceFromFile(@".\encoder.py");
+            source = engine.CreateScriptSourceFromFile(@"D:\Documentos\PROG\Github\TiagoSanti\UltraFaceRecognition\scripts\encoder.py");
         }
 
         public void Execute()

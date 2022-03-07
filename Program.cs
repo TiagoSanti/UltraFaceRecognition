@@ -5,13 +5,6 @@ namespace UltraFaceRecognition
 {
     public class Program
     {
-        public void CallingPython()
-        {
-            Encoder encoder = new();
-
-            encoder.Execute();
-        }
-
         public static int Main()
         {
             Camera? capture = new();
