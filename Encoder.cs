@@ -7,14 +7,20 @@ namespace UltraFaceRecognition
     {
         public static void Test()
         {
-            var imageTest = @"C:\code\UltraFaceRecognition\scripts\3.jpg_cropped.png";
+            Dictionary<string, string> paths = new Dictionary<string, string>();
+            paths.Add("laptopScriptDir", @"-u C:\code\UltraFaceRecognition\scripts\encoder.py");
+            paths.Add("laptopPythonInterpreterDir", @"C:\Users\Tiago Santi\AppData\Local\Programs\Python\Python39\python.exe");
+            paths.Add("laptopImageTestDir", @"C:\code\UltraFaceRecognition\scripts\3.jpg_cropped.png");
+            paths.Add("desktopScriptDir", @"-u D:\Documentos\PROG\Github\TiagoSanti\UltraFaceRecognition\scripts\encoder.py");
+            paths.Add("desktopPythonInterpreterDir", @"C:\Users\tiago\AppData\Local\Programs\Python\Python39\python.exe");
+            paths.Add("desktopImageTestDir", @"D:\Documentos\PROG\Github\TiagoSanti\UltraFaceRecognition\scripts\2.jpg_cropped.png");
 
             var process = new Process
             {
                 StartInfo = new ProcessStartInfo
                 {
-                    FileName = @"C:\Users\Tiago Santi\AppData\Local\Programs\Python\Python39\python.exe",
-                    Arguments = string.Format("{0} {1}", @"-u C:\code\UltraFaceRecognition\scripts\encoder.py", imageTest),
+                    FileName = paths["desktopPythonInterpreterDir"],
+                    Arguments = string.Format("{0} {1}", paths["desktopScriptDir"], paths["desktopImageTestDir"]),
                     UseShellExecute = false,
                     CreateNoWindow = true,
                     RedirectStandardError = true,
@@ -24,14 +30,20 @@ namespace UltraFaceRecognition
                 EnableRaisingEvents = true
             };
 
-            process.ErrorDataReceived += Process_OutputDataReceived;
-            process.OutputDataReceived += Process_OutputDataReceived;
-
             process.Start();
-            process.BeginErrorReadLine();
-            process.BeginOutputReadLine();
-            process.WaitForExit();
-            Console.ReadKey();
+            StreamReader reader = process.StandardOutput;
+            process.Close();
+            string result = reader.ReadToEnd();
+            Console.WriteLine(result);
+            string[] doublesStr = result.Split(',');
+
+            double[] doubles = doublesStr.Select(s => double.Parse(s)).ToArray();
+            Console.WriteLine("-------------- double parse --------------");
+            Console.WriteLine("length: ", doubles.Length);
+            foreach (var uDouble in doubles)
+            {
+                Console.WriteLine(uDouble);
+            }
         }
 
         static void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)
