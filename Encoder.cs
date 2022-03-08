@@ -5,7 +5,7 @@ namespace UltraFaceRecognition
 {
     public class Encoder
     {
-        public void Test()
+        public static void Test()
         {
             var imageTest = @"C:\code\UltraFaceRecognition\scripts\3.jpg_cropped.png";
 
@@ -31,7 +31,7 @@ namespace UltraFaceRecognition
             process.BeginErrorReadLine();
             process.BeginOutputReadLine();
             process.WaitForExit();
-            Console.Read();
+            Console.ReadKey();
         }
 
         static void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)
