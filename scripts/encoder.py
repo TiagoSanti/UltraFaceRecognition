@@ -3,26 +3,24 @@ import cv2
 import numpy as np
 import skimage.transform as trans
 import sys
-
+import pickle
 
 def main():
-    encoder = Encoder()
-
     if len(sys.argv) > 1:
         file_name = sys.argv[1]
-        img = encoder.read_image_from_path(file_name)
-        img_processed = encoder.preprocess(img)
-        encoding = encoder.image_encoding(img_processed)
+        img = Encoder.read_image_from_path(file_name)
+        img_processed = Encoder.preprocess(img)
+        encoding = Encoder.image_encoding(img_processed)
+        
         #print(encoding)
         for unit in encoding:
             print(unit, end=",")
-        sys.stdout.flush()
+
+
 
 
 class Encoder:
-    face_rec = ArcFace.ArcFace()
-
-    def read_image_from_path(self, img_path, **kwargs):
+    def read_image_from_path(img_path, **kwargs):
         # Read and transpose input image
         mode = kwargs.get('mode', 'rgb')
         layout = kwargs.get('layout', 'HWC')
@@ -37,7 +35,7 @@ class Encoder:
                 img = np.transpose(img, (2, 0, 1))
         return img
 
-    def preprocess(self, img, bbox=None, landmark=None, **kwargs):
+    def preprocess(img, bbox=None, landmark=None, **kwargs):
         # Preprocess input image - returns aligned face images
         if isinstance(img, str):
             img = Encoder.read_image_from_path(img, **kwargs)
@@ -96,11 +94,13 @@ class Encoder:
 
             return warped
 
-    def image_encoding(self, img):
-        return self.face_rec.calc_emb(img)
+    def image_encoding(img):
+        fr = ArcFace.ArcFace()
+        return fr.calc_emb(img)
 
     def compare_encodings(self, encoding1, encoding2):
-        return self.face_rec.get_distance_embeddings(encoding1, encoding2)
+        fr = ArcFace.ArcFace()
+        return fr.get_distance_embeddings(encoding1, encoding2)
 
 
 main()

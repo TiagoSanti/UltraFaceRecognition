@@ -7,43 +7,44 @@ namespace UltraFaceRecognition
     {
         public static void Test()
         {
-            Dictionary<string, string> paths = new Dictionary<string, string>();
-            paths.Add("laptopScriptDir", @"-u C:\code\UltraFaceRecognition\scripts\encoder.py");
-            paths.Add("laptopPythonInterpreterDir", @"C:\Users\Tiago Santi\AppData\Local\Programs\Python\Python39\python.exe");
-            paths.Add("laptopImageTestDir", @"C:\code\UltraFaceRecognition\scripts\3.jpg_cropped.png");
-            paths.Add("desktopScriptDir", @"-u D:\Documentos\PROG\Github\TiagoSanti\UltraFaceRecognition\scripts\encoder.py");
-            paths.Add("desktopPythonInterpreterDir", @"C:\Users\tiago\AppData\Local\Programs\Python\Python39\python.exe");
-            paths.Add("desktopImageTestDir", @"D:\Documentos\PROG\Github\TiagoSanti\UltraFaceRecognition\scripts\2.jpg_cropped.png");
+            Dictionary<string, string> paths = new();
+            paths.Add("laptopScript", "\"C:\\Users\\Tiago Santi\\Documents\\GitHub\\UltraFaceRecognition\\scripts\\encoder.py\"");
+            paths.Add("laptopPythonInterpreter", @"C:\Users\Tiago Santi\AppData\Local\Programs\Python\Python39\python.exe");
+            paths.Add("laptopImageTest", @"C:\code\UltraFaceRecognition\scripts\3.jpg_cropped.png");
+            paths.Add("laptopImageTest2", "3.jpg_cropped.png");
+            paths.Add("desktopScript", @"-u D:\Documentos\PROG\Github\TiagoSanti\UltraFaceRecognition\scripts\encoder.py");
+            paths.Add("desktopPythonInterpreter", @"C:\Users\tiago\AppData\Local\Programs\Python\Python39\python.exe");
+            paths.Add("desktopImageTest", @"D:\Documentos\PROG\Github\TiagoSanti\UltraFaceRecognition\scripts\2.jpg_cropped.png");
 
-            var process = new Process
+            using (var process = new Process())
             {
-                StartInfo = new ProcessStartInfo
+                process.StartInfo.FileName = paths["laptopPythonInterpreter"];
+                process.StartInfo.UseShellExecute = false;
+                process.StartInfo.RedirectStandardOutput = true;
+                process.StartInfo.RedirectStandardError = true;
+                process.StartInfo.CreateNoWindow = true;
+                process.StartInfo.LoadUserProfile = true;
+                process.StartInfo.Arguments = string.Format("{0} {1}", paths["laptopScript"], paths["laptopImageTest"]);
+                string? error = null;
+                process.ErrorDataReceived += new DataReceivedEventHandler((sender, e) => { error += e.Data; });
+                process.Start();
+
+                process.BeginErrorReadLine();
+                string output = process.StandardOutput.ReadToEnd();
+                process.WaitForExit();
+
+                Console.WriteLine(error);
+                Console.WriteLine(output);
+                Console.WriteLine("---------------------------------------------");
+                string[] outputSplit = output.Split(',');
+                outputSplit = outputSplit.Take(outputSplit.Count() - 1).ToArray();
+                foreach (string unit in outputSplit)
                 {
-                    FileName = paths["desktopPythonInterpreterDir"],
-                    Arguments = string.Format("{0} {1}", paths["desktopScriptDir"], paths["desktopImageTestDir"]),
-                    UseShellExecute = false,
-                    CreateNoWindow = true,
-                    RedirectStandardError = true,
-                    RedirectStandardOutput = true,
-                },
-
-                EnableRaisingEvents = true
-            };
-
-            process.Start();
-            string output = process.StandardOutput.ReadToEnd();
-            process.Close();
-            Console.WriteLine(output);
-            ConvertResult(output);
-        }
-
-
-        static void ConvertResult(string result)
-        {
-            Console.WriteLine("----------------- convert result --------------------");
-            string[] doublesStr = result.Split(',');
-
-            Console.WriteLine(doublesStr[0], double.Parse(doublesStr[0]));
+                    Console.WriteLine(unit);
+                }
+                
+                Console.WriteLine(outputSplit.Length);
+            }
         }
 
         static void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)
