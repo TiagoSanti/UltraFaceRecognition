@@ -31,19 +31,19 @@ namespace UltraFaceRecognition
             };
 
             process.Start();
-            StreamReader reader = process.StandardOutput;
+            string output = process.StandardOutput.ReadToEnd();
             process.Close();
-            string result = reader.ReadToEnd();
-            Console.WriteLine(result);
+            Console.WriteLine(output);
+            ConvertResult(output);
+        }
+
+
+        static void ConvertResult(string result)
+        {
+            Console.WriteLine("----------------- convert result --------------------");
             string[] doublesStr = result.Split(',');
 
-            double[] doubles = doublesStr.Select(s => double.Parse(s)).ToArray();
-            Console.WriteLine("-------------- double parse --------------");
-            Console.WriteLine("length: ", doubles.Length);
-            foreach (var uDouble in doubles)
-            {
-                Console.WriteLine(uDouble);
-            }
+            Console.WriteLine(doublesStr[0], double.Parse(doublesStr[0]));
         }
 
         static void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)

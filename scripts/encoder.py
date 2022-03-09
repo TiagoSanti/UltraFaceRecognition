@@ -16,6 +16,7 @@ def main():
         #print(encoding)
         for unit in encoding:
             print(unit, end=",")
+        sys.stdout.flush()
 
 
 class Encoder:
