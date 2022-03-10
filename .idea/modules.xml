@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/UltraFaceRecognition.iml" filepath="$PROJECT_DIR$/.idea/UltraFaceRecognition.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../../../../code/UltraFaceRecognitionUtils/.idea/UltraFaceRecognitionUtils.iml" filepath="$PROJECT_DIR$/../../../../../code/UltraFaceRecognitionUtils/.idea/UltraFaceRecognitionUtils.iml" />
     </modules>
   </component>
 </project>
