@@ -3,7 +3,6 @@ import cv2
 import numpy as np
 import skimage.transform as trans
 import sys
-import pickle
 
 def main():
     if len(sys.argv) > 1:
@@ -12,10 +11,8 @@ def main():
         img_processed = Encoder.preprocess(img)
         encoding = Encoder.image_encoding(img_processed)
         
-        #print(encoding)
         for unit in encoding:
             print(unit, end=",")
-
 
 
 

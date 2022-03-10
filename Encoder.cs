@@ -1,5 +1,6 @@
 ﻿using FaceRecognitionDotNet;
 using System.Diagnostics;
+using System.Globalization;
 
 namespace UltraFaceRecognition
 {
@@ -8,23 +9,23 @@ namespace UltraFaceRecognition
         public static void Test()
         {
             Dictionary<string, string> paths = new();
-            paths.Add("laptopScript", "\"C:\\Users\\Tiago Santi\\Documents\\GitHub\\UltraFaceRecognition\\scripts\\encoder.py\"");
             paths.Add("laptopPythonInterpreter", @"C:\Users\Tiago Santi\AppData\Local\Programs\Python\Python39\python.exe");
+            paths.Add("laptopScript", "\"C:\\Users\\Tiago Santi\\Documents\\GitHub\\UltraFaceRecognition\\scripts\\encoder.py\"");
             paths.Add("laptopImageTest", @"C:\code\UltraFaceRecognition\scripts\3.jpg_cropped.png");
             paths.Add("laptopImageTest2", "3.jpg_cropped.png");
-            paths.Add("desktopScript", @"-u D:\Documentos\PROG\Github\TiagoSanti\UltraFaceRecognition\scripts\encoder.py");
             paths.Add("desktopPythonInterpreter", @"C:\Users\tiago\AppData\Local\Programs\Python\Python39\python.exe");
+            paths.Add("desktopScript", "\"D:\\Documentos\\PROG\\Github\\TiagoSanti\\UltraFaceRecognition\\scripts\\encoder.py\"");
             paths.Add("desktopImageTest", @"D:\Documentos\PROG\Github\TiagoSanti\UltraFaceRecognition\scripts\2.jpg_cropped.png");
 
             using (var process = new Process())
             {
-                process.StartInfo.FileName = paths["laptopPythonInterpreter"];
+                process.StartInfo.FileName = paths["desktopPythonInterpreter"];
                 process.StartInfo.UseShellExecute = false;
                 process.StartInfo.RedirectStandardOutput = true;
                 process.StartInfo.RedirectStandardError = true;
                 process.StartInfo.CreateNoWindow = true;
                 process.StartInfo.LoadUserProfile = true;
-                process.StartInfo.Arguments = string.Format("{0} {1}", paths["laptopScript"], paths["laptopImageTest"]);
+                process.StartInfo.Arguments = string.Format("{0} {1}", paths["desktopScript"], paths["desktopImageTest"]);
                 string? error = null;
                 process.ErrorDataReceived += new DataReceivedEventHandler((sender, e) => { error += e.Data; });
                 process.Start();
@@ -37,13 +38,23 @@ namespace UltraFaceRecognition
                 Console.WriteLine(output);
                 Console.WriteLine("---------------------------------------------");
                 string[] outputSplit = output.Split(',');
-                outputSplit = outputSplit.Take(outputSplit.Count() - 1).ToArray();
+                outputSplit = outputSplit.Take(outputSplit.Length - 1).ToArray();
                 foreach (string unit in outputSplit)
                 {
                     Console.WriteLine(unit);
                 }
                 
-                Console.WriteLine(outputSplit.Length);
+                double[] doubleOutput = new double[outputSplit.Length];
+                for (int i = 0; i < doubleOutput.Length; i++)
+                {
+                    doubleOutput[i] = double.Parse(outputSplit[i], CultureInfo.InvariantCulture);
+                }
+
+                Console.WriteLine("-------------- double array ------------------");
+                foreach (double unit in doubleOutput)
+                {
+                    Console.WriteLine(unit);
+                }
             }
         }
 
