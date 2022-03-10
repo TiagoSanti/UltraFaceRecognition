@@ -1,5 +1,4 @@
 ﻿using OpenCvSharp;
-using System.Drawing;
 using UltraFaceDotNet;
 
 namespace UltraFaceRecognition
@@ -9,21 +8,27 @@ namespace UltraFaceRecognition
         public static int Main()
         {
             Camera? capture = new();
+            FaceDetector detector = new();
             List<Person> people = new();
+            Encoder encoder = new();
+
 
             //Console.WriteLine("Starting camera");
-            capture.StartCamera();
+            //capture.StartCamera();
+
+            //Console.WriteLine("Start python encoder instance");
+            Encoder.EncodeDatabaseImages();
 
             //Console.WriteLine("Encode/Load menu");
-            StartEncodings();
+            //people = StartEncodings(detector, people);
 
             //Console.WriteLine("Running recognition");
-            //RunRealTimeRecognizer(capture);
+            //RunRealTimeRecognizer(capture, people);
             
             return 0;
         }
 
-        private static void RunRealTimeRecognizer(Camera capture)
+        public static void RunRealTimeRecognizer(Camera capture, List<Person> people)
         {
             FaceDetector detector = new();
 
@@ -44,12 +49,11 @@ namespace UltraFaceRecognition
                 }
             }
 
-            capture.Close();
+            Camera.Close();
         }
 
-        public static void StartEncodings()
+        public static List<Person> StartEncodings(FaceDetector detector, List<Person> people)
         {
-            FaceDetector detector = new();
             // enchance database images
             detector.EnchanceDatabaseImages();
 
@@ -57,32 +61,13 @@ namespace UltraFaceRecognition
             Encoder.EncodeDatabaseImages();
 
             // load encodings
+
+            return people;
         }
 
-        private static void EnchanceDatabaseImages()
+        public void test()
         {
-            FaceDetector detector = new();
 
-            string imageDatabaseDir = @".\database\images\";
-
-            string[] peopleImageDBDir = Directory.GetDirectories(imageDatabaseDir);
-            foreach (string personImageDBDir in peopleImageDBDir)
-            {
-                string[] personImagesPath = Directory.GetFiles(personImageDBDir);
-                foreach (string personImagePath in personImagesPath)
-                {
-                    if (!personImagePath.Contains("_cropped"))
-                    {
-                        FaceInfo[] faceInfos = detector.DetectFacesImagePath(personImagePath);
-                        if (faceInfos != null)
-                        {
-                            FaceInfo faceInfo = faceInfos[0];
-                            Bitmap bitmap = Helpers.CropImage(personImagePath, faceInfo);
-                            Helpers.OverwriteImage(bitmap, personImagePath);
-                        }
-                    }
-                }
-            }
         }
     }
 }

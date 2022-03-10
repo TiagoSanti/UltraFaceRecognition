@@ -4,7 +4,7 @@ using UltraFaceDotNet;
 
 namespace UltraFaceRecognition
 {
-    class Drawers
+    public class Drawers
     {
         public static void DrawFacesRects(Mat mat, FaceInfo[] faceInfos)
         {

@@ -9,7 +9,7 @@ using UltraFaceDotNet;
 
 namespace UltraFaceRecognition
 {
-    class Helpers
+    public class Helpers
     {
         #region Converters
 
@@ -67,9 +67,9 @@ namespace UltraFaceRecognition
             int width = (int)(faceInfo.X2 - faceInfo.X1);
             int height = (int)(faceInfo.Y2 - faceInfo.Y1);
 
-            Rectangle faceRectangle = new Rectangle(X1, Y1, width, height);
+            Rectangle faceRectangle = new(X1, Y1, width, height);
 
-            Bitmap cropped = new Bitmap(faceRectangle.Width, faceRectangle.Height);
+            Bitmap cropped = new(faceRectangle.Width, faceRectangle.Height);
             using Graphics g = Graphics.FromImage(cropped);
             g.DrawImage(bitmap, -faceRectangle.X, -faceRectangle.Y);
 

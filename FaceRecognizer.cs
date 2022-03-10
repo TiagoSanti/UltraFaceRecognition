@@ -3,7 +3,7 @@ using OpenCvSharp;
 
 namespace UltraFaceRecognition
 {
-    class FaceRecognizer
+    public class FaceRecognizer
     {
         public static void RecognizeFaces(List<FaceEncoding> faceEncodings, Location[] faceLocations, List<Person> people, Mat mat)
         {
