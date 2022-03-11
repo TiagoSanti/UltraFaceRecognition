@@ -1,6 +1,5 @@
 import os
 from os import path
-from pathlib import Path
 from ArcFaceAPI import *
 
 
@@ -9,7 +8,12 @@ def check_if_image_encoding_exists(encodings_files, image_file):
 
 
 def main():
-    database_path = sys.argv[1]
+    try:
+        database_path = sys.argv[1]
+    except IndexError:
+        print('No arguments found')
+        database_path = r'C:\Users\Tiago Santi\Documents\GitHub\UltraFaceRecognition\database'
+
     os.chdir(database_path)
     people_encodings_path = f'{database_path}\\encodings'
     people_images_path = f'{database_path}\\images'

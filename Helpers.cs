@@ -6,6 +6,7 @@ using Img = System.Drawing.Image;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using UltraFaceDotNet;
+using System.Diagnostics;
 
 namespace UltraFaceRecognition
 {
@@ -58,6 +59,7 @@ namespace UltraFaceRecognition
 
         #endregion
 
+        #region Image Manager
         public static Bitmap CropImage(string imageFilePath, FaceInfo faceInfo)
         {
             using Bitmap bitmap = Img.FromFile(imageFilePath) as Bitmap;
@@ -81,5 +83,50 @@ namespace UltraFaceRecognition
             File.Delete(personImagePath);
             bitmap.Save(personImagePath+"_cropped.png", System.Drawing.Imaging.ImageFormat.Png);
         }
+        #endregion
+
+        #region Process Manager
+        public static void StartProcess(Process process)
+        {
+            process.ErrorDataReceived += new DataReceivedEventHandler((sender, e) => { Console.WriteLine(e.Data); });
+            process.OutputDataReceived += new DataReceivedEventHandler((sender, e) => { Console.WriteLine(e.Data); });
+            process.Start();
+
+            process.BeginErrorReadLine();
+            process.BeginOutputReadLine();
+            process.WaitForExit();
+        }
+
+        public static Process GetProcess(string scriptPath, string interpreter)
+        {
+            Process process = new()
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = interpreter,
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    CreateNoWindow = true,
+                    LoadUserProfile = true,
+                    Arguments = scriptPath
+                },
+            };
+
+            return process;
+        }
+        #endregion
+
+        #region Path Manager
+        public static string GetProjectPath()
+        {
+            string current = Directory.GetCurrentDirectory();   // \net6.0
+            current = Directory.GetParent(current).FullName;    // \Debug
+            current = Directory.GetParent(current).FullName;    // \x64
+            current = Directory.GetParent(current).FullName;    // \bin
+            current = Directory.GetParent(current).FullName;    // \UltraFaceRecognition
+            return current;
+        }
+        #endregion
     }
 }

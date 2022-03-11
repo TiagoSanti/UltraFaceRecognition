@@ -9,23 +9,20 @@ namespace UltraFaceRecognition
         {
             Camera? capture = new();
             FaceDetector detector = new();
-            List<Person> people = new();
-            Encoder encoder = new();
-
 
             //Console.WriteLine("Starting camera");
             //capture.StartCamera();
 
             //Console.WriteLine("Encode/Load menu");
-            StartEncodings(detector, people);
+            DatabaseEncodings(detector);
 
             //Console.WriteLine("Running recognition");
-            //RunRealTimeRecognizer(capture, people);
+            RunRealTimeRecognizer(capture);
             
             return 0;
         }
 
-        public static void RunRealTimeRecognizer(Camera capture, List<Person> people)
+        public static void RunRealTimeRecognizer(Camera capture)
         {
             FaceDetector detector = new();
 
@@ -41,6 +38,8 @@ namespace UltraFaceRecognition
                     //Console.WriteLine("Drawing rects");
                     Drawers.DrawFacesRects(mat, faceInfos);
 
+                    //FaceRecognizer.RecognizeFace();
+
                     //Console.WriteLine("Showing result image");
                     capture.ShowImage(mat);
                 }
@@ -49,22 +48,13 @@ namespace UltraFaceRecognition
             Camera.Close();
         }
 
-        public static List<Person> StartEncodings(FaceDetector detector, List<Person> people)
+        public static void DatabaseEncodings(FaceDetector detector)
         {
             // enchance database images
-            //detector.EnchanceDatabaseImages();
+            detector.EnchanceDatabaseImages();
 
             // encode database enchanced images
             Encoder.EncodeDatabase();
-
-            // load encodings
-
-            return people;
-        }
-
-        public void test()
-        {
-
         }
     }
 }

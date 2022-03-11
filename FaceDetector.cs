@@ -43,7 +43,8 @@ namespace UltraFaceRecognition
 
         public void EnchanceDatabaseImages()
         {
-            string imageDatabaseDir = @".\database\images\";
+            string projectDir = Helpers.GetProjectPath();
+            string imageDatabaseDir = projectDir+@"\database\images\";
 
             string[] peopleImageDBDir = Directory.GetDirectories(imageDatabaseDir);
             foreach (string personImageDBDir in peopleImageDBDir)
