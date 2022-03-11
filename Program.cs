@@ -16,11 +16,8 @@ namespace UltraFaceRecognition
             //Console.WriteLine("Starting camera");
             //capture.StartCamera();
 
-            //Console.WriteLine("Start python encoder instance");
-            Encoder.EncodeDatabaseImages();
-
             //Console.WriteLine("Encode/Load menu");
-            //people = StartEncodings(detector, people);
+            StartEncodings(detector, people);
 
             //Console.WriteLine("Running recognition");
             //RunRealTimeRecognizer(capture, people);
@@ -55,10 +52,10 @@ namespace UltraFaceRecognition
         public static List<Person> StartEncodings(FaceDetector detector, List<Person> people)
         {
             // enchance database images
-            detector.EnchanceDatabaseImages();
+            //detector.EnchanceDatabaseImages();
 
             // encode database enchanced images
-            Encoder.EncodeDatabaseImages();
+            Encoder.EncodeDatabase();
 
             // load encodings
 
