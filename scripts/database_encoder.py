@@ -1,4 +1,5 @@
 import os
+from time import time
 from os import path
 from ArcFaceAPI import *
 
@@ -9,10 +10,10 @@ def check_if_image_encoding_exists(encodings_files, image_file):
 
 def main():
     try:
-        database_path = sys.argv[1]
+        database_path = sys.argv[1]  # c# execution
     except IndexError:
-        print('No arguments found')
-        database_path = r'C:\Users\Tiago Santi\Documents\GitHub\UltraFaceRecognition\database'
+        print('No directory argument found')
+        database_path = r'C:\Dev\Github\TiagoSanti\UltraFaceRecognition\database'  # only script execution
 
     os.chdir(database_path)
     people_encodings_path = f'{database_path}\\encodings'
@@ -53,5 +54,7 @@ def main():
                     else:
                         print(f'skipping {person_image}..')
 
-
+start = time()
 main()
+end = time()
+print(f'Time to encode database: {end - start} seconds', end="")
