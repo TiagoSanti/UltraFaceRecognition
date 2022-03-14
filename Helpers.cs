@@ -12,15 +12,29 @@ namespace UltraFaceRecognition
     public class Helpers
     {
         #region Converters
-
         public static Bitmap MatToBitmap(Mat mat)
         {
             return BitmapConverter.ToBitmap(mat);
         }
 
-        public static Mat BitmapToMat(Bitmap bitmap)
+        public static List<Bitmap> MatsToBitmaps(List<Mat> mats)
         {
-            return BitmapConverter.ToMat(bitmap);
+            List<Bitmap> bitmaps = new();
+            foreach (Mat mat in mats)
+            {
+                bitmaps.Add(BitmapConverter.ToBitmap(mat));
+            }
+            return bitmaps;
+        }
+
+        public static List<Mat> BitmapsToMats(List<Bitmap> bitmaps)
+        {
+            List<Mat> mats = new();
+            foreach (Bitmap bitmap in bitmaps)
+            {
+                mats.Add(BitmapConverter.ToMat(bitmap));
+            }
+            return mats;
         }
 
         #endregion
@@ -77,22 +91,28 @@ namespace UltraFaceRecognition
             return cropped;
         }
 
-        public static Bitmap CropImageFromMat(Mat mat, FaceInfo faceInfo)
+        public static List<Bitmap> CropImageFromMat(Mat mat, FaceInfo[] faceInfos)
         {
             using Bitmap bitmap = MatToBitmap(mat);
+            List<Bitmap> croppeds = new();
 
-            int X1 = (int)faceInfo.X1;
-            int Y1 = (int)faceInfo.Y1;
-            int width = (int)(faceInfo.X2 - faceInfo.X1);
-            int height = (int)(faceInfo.Y2 - faceInfo.Y1);
+            foreach (FaceInfo faceInfo in faceInfos)
+            {
+                int X1 = (int)faceInfo.X1;
+                int Y1 = (int)faceInfo.Y1;
+                int width = (int)(faceInfo.X2 - faceInfo.X1);
+                int height = (int)(faceInfo.Y2 - faceInfo.Y1);
 
-            Rectangle faceRectangle = new(X1, Y1, width, height);
+                Rectangle faceRectangle = new(X1, Y1, width, height);
 
-            Bitmap cropped = new(faceRectangle.Width, faceRectangle.Height);
-            using Graphics g = Graphics.FromImage(cropped);
-            g.DrawImage(bitmap, -faceRectangle.X, -faceRectangle.Y);
+                Bitmap cropped = new(faceRectangle.Width, faceRectangle.Height);
+                using Graphics g = Graphics.FromImage(cropped);
+                g.DrawImage(bitmap, -faceRectangle.X, -faceRectangle.Y);
 
-            return cropped;
+                croppeds.Add(cropped);
+            }
+
+            return croppeds;
         }
 
         internal static void OverwriteImage(Bitmap bitmap, string personImagePath)
@@ -101,10 +121,22 @@ namespace UltraFaceRecognition
             bitmap.Save(personImagePath+"_cropped.png", System.Drawing.Imaging.ImageFormat.Png);
         }
 
-        public static void SaveTempImage(Mat mat)
+        public static void SaveTempImage(List<Mat> mats)
         {
-            string tempPath = Helpers.GetProjectPath() + "\\temp\\";
-            Cv2.ImWrite(tempPath + "temp.png", mat);
+            string tempPath = GetProjectPath() + "\\temp\\";
+            if (!Directory.Exists(tempPath))
+            {
+                Directory.CreateDirectory(tempPath);
+            }
+
+            var i = 0;
+            foreach (Mat mat in mats)
+            {
+                var fileName = "temp" + i;
+                Cv2.ImWrite(tempPath + fileName + ".png", mat);
+                i++;
+            }
+            
         }
         #endregion
 

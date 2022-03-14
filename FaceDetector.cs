@@ -58,7 +58,7 @@ namespace UltraFaceRecognition
                         if (faceInfos != null)
                         {
                             FaceInfo faceInfo = faceInfos[0];
-                            Bitmap bitmap = Helpers.CropImageFromPath(personImagePath, faceInfo);
+                            using Bitmap bitmap = Helpers.CropImageFromPath(personImagePath, faceInfo);
                             Helpers.OverwriteImage(bitmap, personImagePath);
                         }
                     }

@@ -3,7 +3,7 @@ using System.Diagnostics;
 
 namespace UltraFaceRecognition
 {
-    class PythonScript
+    public class PythonScript
     {
         public string LaptopPythonInterpreter = @"C:\Users\TiagoSanti\AppData\Local\Programs\Python\Python39\python.exe";
         public string DesktopPythonInterpreter = @"C:\Users\tiago\AppData\Local\Programs\Python\Python39\python.exe";
@@ -34,7 +34,7 @@ namespace UltraFaceRecognition
             {
                 StartInfo = new ProcessStartInfo
                 {
-                    FileName = LaptopPythonInterpreter,
+                    FileName = DesktopPythonInterpreter,
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
@@ -53,9 +53,20 @@ namespace UltraFaceRecognition
             Process.OutputDataReceived += new DataReceivedEventHandler((sender, e) => { Console.WriteLine(e.Data); });
             Process.Start();
 
-            Process.BeginErrorReadLine();
-            Process.BeginOutputReadLine();
-            Process.WaitForExit();
+            try
+            {
+                Process.BeginErrorReadLine();
+                Process.BeginOutputReadLine();
+            }
+            catch (Exception ex)
+            {
+
+            }
+            finally 
+            {
+                Process.WaitForExit();
+                Process.Close();
+            }
         }
     }
 }
