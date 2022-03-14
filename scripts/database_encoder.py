@@ -10,7 +10,7 @@ def check_if_image_encoding_exists(encodings_files, image_file):
 
 def main():
     try:
-        database_path = sys.argv[1]  # c# execution
+        database_path = sys.argv[1]  # csharp execution
     except IndexError:
         print('No directory argument found')
         database_path = r'C:\Dev\Github\TiagoSanti\UltraFaceRecognition\database'  # only script execution

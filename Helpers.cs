@@ -97,7 +97,7 @@ namespace UltraFaceRecognition
             process.WaitForExit();
         }
 
-        public static Process GetProcess(string scriptPath, string interpreter)
+        public static Process GetProcess(string scriptPath, string databasePath, string interpreter)
         {
             Process process = new()
             {
@@ -109,7 +109,7 @@ namespace UltraFaceRecognition
                     RedirectStandardError = true,
                     CreateNoWindow = true,
                     LoadUserProfile = true,
-                    Arguments = scriptPath
+                    Arguments = scriptPath + " " + databasePath
                 },
             };
 
