@@ -1,4 +1,5 @@
 import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 from ArcFaceAPI import *
 from Person import Person
 
@@ -6,6 +7,11 @@ from Person import Person
 def process_and_encode(img):
     img = preprocess(img)
     return image_encoding(img)
+
+
+def get_temp_image(image_path):
+    img = load_image_and_process(image_path)
+    return img
 
 
 def load_people_list():
@@ -36,8 +42,21 @@ def load_people_list():
 
 def main():
     people = load_people_list()
+    #for person in people:
+    #    person.show()
+
+    image_path = sys.argv[2] + '\\temp.png'
+    img = get_temp_image(image_path)
+    encoding = image_encoding(img)
+
+    people_distances = {}
     for person in people:
-        person.show()
+        encodings_distance = []
+        for person_encoding in person.encodings:
+            encodings_distance.append(compare_encodings(encoding, person_encoding))
+        avg_person_distance = sum(encodings_distance)/len(encodings_distance)
+        print(f'{person.name} avg distance: {avg_person_distance}')
+        people_distances[f'{person.name}'] = avg_person_distance
 
 
 main()

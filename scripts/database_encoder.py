@@ -1,7 +1,11 @@
 import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 from time import time
 from os import path
+start = time()
 from ArcFaceAPI import *
+end = time()
+print(f'Time to import ArcFaceAPI: {end - start} seconds')
 
 
 def check_if_image_encoding_exists(encodings_files, image_file):
@@ -53,6 +57,7 @@ def main():
                         np.save(person_image, encoding)
                     else:
                         print(f'skipping {person_image}..')
+
 
 start = time()
 main()

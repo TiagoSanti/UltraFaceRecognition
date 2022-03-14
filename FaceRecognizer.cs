@@ -1,17 +1,19 @@
-﻿namespace UltraFaceRecognition
+﻿using OpenCvSharp;
+
+namespace UltraFaceRecognition
 {
     public class FaceRecognizer
     {
-        public static void RecognizeFace()
+        public static async void CallPythonAsync()
         {
-            string laptopPythonInterpreter = @"C:\Users\TiagoSanti\AppData\Local\Programs\Python\Python39\python.exe";
-            string desktopPythonInterpreter = @"C:\Users\tiago\AppData\Local\Programs\Python\Python39\python.exe";
             string projectPath = Helpers.GetProjectPath();
             string scriptPath = projectPath + "\\scripts\\face_encoding_and_comparison.py";
             string databasePath = projectPath + "\\database";
+            string tempPath = projectPath + "\\temp";
+            string[] args = {scriptPath, databasePath, tempPath};
 
-            using var process = Helpers.GetProcess(scriptPath, databasePath, desktopPythonInterpreter);
-            Helpers.StartProcess(process);
+            PythonScript script = new(args);
+            await Task.Run(() => script.StartProcess());
         }
     }
 }

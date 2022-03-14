@@ -6,7 +6,6 @@ using Img = System.Drawing.Image;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using UltraFaceDotNet;
-using System.Diagnostics;
 
 namespace UltraFaceRecognition
 {
@@ -60,9 +59,27 @@ namespace UltraFaceRecognition
         #endregion
 
         #region Image Manager
-        public static Bitmap CropImage(string imageFilePath, FaceInfo faceInfo)
+        public static Bitmap CropImageFromPath(string imageFilePath, FaceInfo faceInfo)
         {
             using Bitmap bitmap = Img.FromFile(imageFilePath) as Bitmap;
+
+            int X1 = (int)faceInfo.X1;
+            int Y1 = (int)faceInfo.Y1;
+            int width = (int)(faceInfo.X2 - faceInfo.X1);
+            int height = (int)(faceInfo.Y2 - faceInfo.Y1);
+
+            Rectangle faceRectangle = new(X1, Y1, width, height);
+
+            Bitmap cropped = new(faceRectangle.Width, faceRectangle.Height);
+            using Graphics g = Graphics.FromImage(cropped);
+            g.DrawImage(bitmap, -faceRectangle.X, -faceRectangle.Y);
+
+            return cropped;
+        }
+
+        public static Bitmap CropImageFromMat(Mat mat, FaceInfo faceInfo)
+        {
+            using Bitmap bitmap = MatToBitmap(mat);
 
             int X1 = (int)faceInfo.X1;
             int Y1 = (int)faceInfo.Y1;
@@ -83,37 +100,11 @@ namespace UltraFaceRecognition
             File.Delete(personImagePath);
             bitmap.Save(personImagePath+"_cropped.png", System.Drawing.Imaging.ImageFormat.Png);
         }
-        #endregion
 
-        #region Process Manager
-        public static void StartProcess(Process process)
+        public static void SaveTempImage(Mat mat)
         {
-            process.ErrorDataReceived += new DataReceivedEventHandler((sender, e) => { Console.WriteLine(e.Data); });
-            process.OutputDataReceived += new DataReceivedEventHandler((sender, e) => { Console.WriteLine(e.Data); });
-            process.Start();
-
-            process.BeginErrorReadLine();
-            process.BeginOutputReadLine();
-            process.WaitForExit();
-        }
-
-        public static Process GetProcess(string scriptPath, string databasePath, string interpreter)
-        {
-            Process process = new()
-            {
-                StartInfo = new ProcessStartInfo
-                {
-                    FileName = interpreter,
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    CreateNoWindow = true,
-                    LoadUserProfile = true,
-                    Arguments = scriptPath + " " + databasePath
-                },
-            };
-
-            return process;
+            string tempPath = Helpers.GetProjectPath() + "\\temp\\";
+            Cv2.ImWrite(tempPath + "temp.png", mat);
         }
         #endregion
 

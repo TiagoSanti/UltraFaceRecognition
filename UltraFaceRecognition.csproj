@@ -29,4 +29,8 @@
     <PackageReference Include="UltraFaceDotNet.GPU" Version="1.0.0.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="temp\" />
+  </ItemGroup>
+
 </Project>
