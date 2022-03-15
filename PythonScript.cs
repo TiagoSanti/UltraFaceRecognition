@@ -34,7 +34,7 @@ namespace UltraFaceRecognition
             {
                 StartInfo = new ProcessStartInfo
                 {
-                    FileName = DesktopPythonInterpreter,
+                    FileName = LaptopPythonInterpreter,
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,

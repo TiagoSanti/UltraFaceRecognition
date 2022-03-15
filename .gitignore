@@ -445,3 +445,6 @@ fabric.properties
 .idea/caches/build_file_checksums.ser!/database/
 /.idea/discord.xml
 *.xml
+/log.txt
+/mprofile_20220315110318.dat
+/mprofile_20220315110336.dat

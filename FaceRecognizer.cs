@@ -2,17 +2,13 @@
 {
     public class FaceRecognizer
     {
-        private readonly PythonScript PyScript;
-        public bool IsStarted = false;
+        public PythonScript PyScript;
         public string[] Args;
         public Task PyTask;
 
         public FaceRecognizer()
         {
-            IsStarted = false;
             Args = CreatePythonScript();
-            PyScript = new PythonScript(Args);
-            PyTask = new(PyScript.StartProcess);
         }
 
         private static string[] CreatePythonScript()
@@ -26,35 +22,49 @@
             return args;
         }
 
-        public async void RunPythonAsync()
+        public void RunPython()
         {
-            if (!IsStarted)
+            if (PyScript == null)
+            {
+                PyScript = new PythonScript(Args);
+                PyTask = new(PyScript.StartProcess);
+            }
+            if (PyTask.Status == TaskStatus.Created)
             {
                 Console.WriteLine("PyTask starting..");
                 ReloadPyTask();
                 PyTask.Start();
-                IsStarted = true;
             }
-            if (PyTask.IsCompleted)
+            else if (PyTask.Status == TaskStatus.Running)
+            {
+                //Console.WriteLine("PyTask still running..");
+            }
+            else if (PyTask.Status == TaskStatus.RanToCompletion)
             {
                 Console.WriteLine("PyTask completed..");
-                IsStarted = false;
+                PyTask.Dispose();
+                ReloadPyTask();
+            }
+            else if (PyTask.Status == TaskStatus.Faulted)
+            {
+                Console.WriteLine("PyTask got an exception");
+                PyTask.Dispose();
+            }
+            else if (PyTask.Status == TaskStatus.Canceled)
+            {
+                Console.WriteLine("PyTask's been cancelled");
                 PyTask.Dispose();
             }
             else
             {
-                Console.WriteLine("PyTask still running..");
+                Console.WriteLine(PyTask.Status.ToString());
             }
         }
 
         private void ReloadPyTask()
         {
+            PyScript = new PythonScript(Args);
             PyTask = new(PyScript.StartProcess);
-        }
-
-        public void Close()
-        {
-            PyScript.Process.Close();
         }
     }
 }

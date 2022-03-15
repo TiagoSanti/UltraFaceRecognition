@@ -1,4 +1,6 @@
 import os
+import math
+import time
 #os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 from ArcFaceAPI import *
 from Person import Person
@@ -42,28 +44,36 @@ def load_people_list():
 
 def main():
     people = load_people_list()
-    #for person in people:
-    #    person.show()
+    try:
+        images_dir = sys.argv[2]  # csharp execution
+    except IndexError:
+        print('No directory argument found')
+        images_dir = r'C:\Dev\Github\TiagoSanti\UltraFaceRecognition\temp'
+    while True:
+        images_path = os.listdir(images_dir)
+        if len(images_path) > 0:
+            for image_path in images_path:
+                img = get_temp_image(images_dir+'\\'+image_path)
+                encoding = image_encoding(img)
+                people_distances = {}
+                for person in people:
+                    person_encodings_scores = []
+                    for person_encoding in person.encodings:
+                        distance = compare_encodings(encoding, person_encoding)
+                        square_distance = math.sqrt(distance)
+                        score = 1/square_distance
+                        person_encodings_scores.append(score)
+                    person_avg_score = sum(person_encodings_scores)/len(person_encodings_scores)
+                    people_distances[f'{person.name}'] = person_avg_score
+                    #sys.stdout.flush()
+                # TO DO
+                # best_score = max(people_distances, people_distances.get)
+        print('')
 
-    encodings = []
-    images_dir = sys.argv[2]
-    images_path = os.listdir(images_dir)
-    if len(images_path) > 0:
-        for image_path in images_path:
-            img = get_temp_image(image_path)
-            os.remove(image_path)
-            img_encoding = image_encoding(img)
-            encodings.append(img_encoding)
 
-        for encoding in encodings:
-            people_distances = {}
-            for person in people:
-                encodings_distance = []
-                for person_encoding in person.encodings:
-                    encodings_distance.append(compare_encodings(encoding, person_encoding))
-                avg_person_distance = sum(encodings_distance)/len(encodings_distance)
-                print(f'{person.name} avg distance: {avg_person_distance}')
-                people_distances[f'{person.name}'] = avg_person_distance
+        print('sleeping')
+        time.sleep(5)
+        print('sleep finished')
 
 
 main()

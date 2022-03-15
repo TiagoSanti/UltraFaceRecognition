@@ -11,7 +11,7 @@ namespace UltraFaceRecognition
 
             ClearTemp();
             var watch = System.Diagnostics.Stopwatch.StartNew();
-            DatabaseEncodings(detector);
+            //DatabaseEncodings(detector);
             watch.Stop();
             Console.WriteLine("Time to run DatabaseEncodings(): " + watch.Elapsed.TotalSeconds.ToString());
 
@@ -24,7 +24,9 @@ namespace UltraFaceRecognition
             FaceRecognizer faceRecognizer = new();
             Camera capture = new();
             capture.StartCamera();
+            faceRecognizer.RunPython();
 
+            var watch = System.Diagnostics.Stopwatch.StartNew();
             while (Window.WaitKey(10) != 27)
             {
                 using Mat? mat = capture.GetFrame();
@@ -37,17 +39,20 @@ namespace UltraFaceRecognition
                                                                 where faceInfo.Score > 0.9
                                                                 select faceInfo;
                         List<Mat> croppedMats = Helpers.BitmapsToMats(Helpers.CropImageFromMat(mat, faceInfos));
-                        Helpers.SaveTempImage(croppedMats);
-                        faceRecognizer.RunPythonAsync();
+                        if (watch.Elapsed.TotalSeconds > 5)
+                        {
+                            Helpers.SaveTempImage(croppedMats);
+                            watch.Restart();
+                        }
+                        //faceRecognizer.RunPython();
                         Drawers.DrawFacesRects(mat, faceInfos);
                     }
 
                     capture.ShowImage(mat);
                 }
             }
-
+            watch.Stop();
             ClearTemp();
-            faceRecognizer.Close();
             Camera.Close();
         }
 
@@ -62,7 +67,6 @@ namespace UltraFaceRecognition
                     Directory.Delete(image);
                 }
             }
-            
         }
 
         public static void DatabaseEncodings(FaceDetector detector)

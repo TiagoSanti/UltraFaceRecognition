@@ -14,7 +14,15 @@ namespace UltraFaceRecognition
         #region Converters
         public static Bitmap MatToBitmap(Mat mat)
         {
-            return BitmapConverter.ToBitmap(mat);
+            try
+            {
+                return BitmapConverter.ToBitmap(mat);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return null;
+            }
         }
 
         public static List<Bitmap> MatsToBitmaps(List<Mat> mats)
