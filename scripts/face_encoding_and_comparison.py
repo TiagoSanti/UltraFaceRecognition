@@ -1,5 +1,4 @@
 import os
-import math
 import time
 #os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 from ArcFaceAPI import *
@@ -20,7 +19,7 @@ def load_people_list():
     try:
         database_path = sys.argv[1]  # c# execution
     except IndexError:
-        print('No directory argument found')
+        print('No db directory argument found')
         database_path = r'C:\Dev\Github\TiagoSanti\UltraFaceRecognition\database'  # only script execution
 
     people = []
@@ -42,38 +41,54 @@ def load_people_list():
     return people
 
 
+def clear():
+    os.system('cls')
+
+
 def main():
     people = load_people_list()
     try:
         images_dir = sys.argv[2]  # csharp execution
     except IndexError:
-        print('No directory argument found')
+        print('No temp directory argument found')
         images_dir = r'C:\Dev\Github\TiagoSanti\UltraFaceRecognition\temp'
     while True:
-        images_path = os.listdir(images_dir)
-        if len(images_path) > 0:
+    # for i in range(1):
+        start = time.time()
+        images_path = np.asarray(os.listdir(images_dir))
+        if images_path.size > 0:
             for image_path in images_path:
                 img = get_temp_image(images_dir+'\\'+image_path)
                 encoding = image_encoding(img)
                 people_distances = {}
                 for person in people:
-                    person_encodings_scores = []
-                    for person_encoding in person.encodings:
-                        distance = compare_encodings(encoding, person_encoding)
-                        square_distance = math.sqrt(distance)
-                        score = 1/square_distance
-                        person_encodings_scores.append(score)
-                    person_avg_score = sum(person_encodings_scores)/len(person_encodings_scores)
+                    person_encodings_scores = []  # TODO convert to np.array
+                    person_encodings = np.asarray(person.encodings)
+
+                    for person_encoding in person_encodings:
+                        person_encodings_scores.append(compare_encodings(encoding, person_encoding))
+
+                    person_encodings_scores = np.asarray(person_encodings_scores)
+                    # print(f'Distance: {person_encodings_scores}')
+                    person_encodings_scores = np.square(person_encodings_scores)
+                    # print(f'Square distance: {person_encodings_scores}')
+                    person_encodings_scores = person_encodings_scores**-1
+                    # print(f'Score (1/SD): {person_encodings_scores}\n')
+                    person_avg_score = person_encodings_scores.mean()
                     people_distances[f'{person.name}'] = person_avg_score
-                    #sys.stdout.flush()
-                # TO DO
-                # best_score = max(people_distances, people_distances.get)
+
+                best_person = max(people_distances, key=people_distances.get)
+                print(f'------- Best person match for {image_path}: {best_person} -> Score {people_distances.get(best_person)} --------')
+                sys.stdout.flush()
+
+        del images_path
+        del person_encodings
+        del person_encodings_scores
+        print(f'Encoding execution time: {time.time() - start} seconds')
         print('')
 
-
-        print('sleeping')
         time.sleep(5)
-        print('sleep finished')
 
 
 main()
+

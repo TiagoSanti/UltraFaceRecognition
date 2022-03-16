@@ -11,7 +11,7 @@ namespace UltraFaceRecognition
 
             ClearTemp();
             var watch = System.Diagnostics.Stopwatch.StartNew();
-            //DatabaseEncodings(detector);
+            DatabaseEncodings(detector);
             watch.Stop();
             Console.WriteLine("Time to run DatabaseEncodings(): " + watch.Elapsed.TotalSeconds.ToString());
 
@@ -24,7 +24,6 @@ namespace UltraFaceRecognition
             FaceRecognizer faceRecognizer = new();
             Camera capture = new();
             capture.StartCamera();
-            faceRecognizer.RunPython();
 
             var watch = System.Diagnostics.Stopwatch.StartNew();
             while (Window.WaitKey(10) != 27)
@@ -35,17 +34,29 @@ namespace UltraFaceRecognition
                     FaceInfo[] faceInfos = detector.DetectFacesMat(mat);
                     if (faceInfos.Length > 0)
                     {
-                        IEnumerable<FaceInfo> validFaceInfos =  from faceInfo in faceInfos
-                                                                where faceInfo.Score > 0.9
-                                                                select faceInfo;
-                        List<Mat> croppedMats = Helpers.BitmapsToMats(Helpers.CropImageFromMat(mat, faceInfos));
+                        IEnumerable<FaceInfo> validFaceInfos = from faceInfo in faceInfos
+                                                               where faceInfo.Score > 0.9
+                                                               select faceInfo;
+                        Drawers.DrawFacesRects(mat, faceInfos);
+
                         if (watch.Elapsed.TotalSeconds > 5)
                         {
-                            Helpers.SaveTempImage(croppedMats);
+                            if (faceRecognizer.GetPyTaskStatus() == TaskStatus.Created)
+                            {
+                                Console.WriteLine(faceRecognizer.GetPyTaskStatus());
+                                faceRecognizer.RunPyTask();
+                            }
+                            else if (faceRecognizer.GetPyTaskStatus() == TaskStatus.Running)
+                            {
+                                if (!ThereIsTemp())
+                                {
+                                    List<Mat> croppedMats = Helpers.BitmapsToMats(Helpers.CropImageFromMat(mat, faceInfos));
+                                    Helpers.SaveTempImage(croppedMats);
+                                }
+                            }
+
                             watch.Restart();
                         }
-                        //faceRecognizer.RunPython();
-                        Drawers.DrawFacesRects(mat, faceInfos);
                     }
 
                     capture.ShowImage(mat);
@@ -56,16 +67,19 @@ namespace UltraFaceRecognition
             Camera.Close();
         }
 
-        public static void ClearTemp()
+        public static bool ThereIsTemp()
         {
             string tempPath = Helpers.GetProjectPath() + "\\temp";
-            var tempImages = Directory.GetFiles(tempPath);
-            foreach (var image in tempImages)
+            string[] tempImages = Directory.GetFiles(tempPath);
+
+            return tempImages.Length > 0;
+        }
+
+        public static void ClearTemp()
+        {
+            if (ThereIsTemp())
             {
-                if (Directory.Exists(image))
-                {
-                    Directory.Delete(image);
-                }
+
             }
         }
 

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 
 namespace UltraFaceRecognition
 {
@@ -39,7 +38,6 @@ namespace UltraFaceRecognition
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     CreateNoWindow = true,
-                    LoadUserProfile = true,
                     Arguments = PutArgs()
                 },
             };
@@ -58,9 +56,9 @@ namespace UltraFaceRecognition
                 Process.BeginErrorReadLine();
                 Process.BeginOutputReadLine();
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-
+                Console.WriteLine("Process exception: " + e.Message);
             }
             finally 
             {
