@@ -1,2 +1,2 @@
-# Detecção e reconhecimento facial usando UltraFaceDotNet e ArcFace em Python
-Em desenvolvimento.
+# Face detection and recognition using [UltraFaceDotNet](https://github.com/takuya-takeuchi/UltraFaceDotNet) and [ArcFace Python API](https://pypi.org/project/arcface/)
+
