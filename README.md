@@ -1,1 +1,2 @@
-Repositório para desenvolvimento e teste, nem sempre funcional.
+# Detecção e reconhecimento facial usando UltraFaceDotNet e ArcFace em Python
+Em desenvolvimento.
