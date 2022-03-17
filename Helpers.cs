@@ -1,10 +1,7 @@
-﻿using FaceRecognitionDotNet;
-using OpenCvSharp;
+﻿using OpenCvSharp;
 using OpenCvSharp.Extensions;
 using System.Drawing;
 using Img = System.Drawing.Image;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
 using UltraFaceDotNet;
 
 namespace UltraFaceRecognition
@@ -43,39 +40,6 @@ namespace UltraFaceRecognition
                 mats.Add(BitmapConverter.ToMat(bitmap));
             }
             return mats;
-        }
-
-        #endregion
-
-        #region Serizalization
-
-        public static void SerializeEncoding(string fileName, FaceEncoding encoding)
-        {
-            IFormatter formatter = new BinaryFormatter();
-            Stream stream = new FileStream(fileName, FileMode.Create);
-
-            formatter.Serialize(stream, encoding);
-            stream.Close();
-        }
-
-        public static FaceEncoding? DeserializeEncoding(string fileName)
-        {
-            if (File.Exists(fileName))
-            {
-                IFormatter formatter = new BinaryFormatter();
-                Stream stream = new FileStream(fileName, FileMode.Open);
-                FaceEncoding encoding = (FaceEncoding)formatter.Deserialize(stream);
-                stream.Close();
-
-                return encoding;
-            }
-
-            return null;
-        }
-
-        internal static Rect FaceRect(FaceInfo faceInfo)
-        {
-            throw new NotImplementedException();
         }
 
         #endregion
