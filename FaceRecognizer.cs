@@ -1,71 +1,48 @@
-﻿using FaceRecognitionDotNet;
-using OpenCvSharp;
-
-namespace UltraFaceRecognition
+﻿namespace UltraFaceRecognition
 {
     public class FaceRecognizer
     {
-        public static void RecognizeFaces(List<FaceEncoding> faceEncodings, Location[] faceLocations, List<Person> people, Mat mat)
+        public Task PyTask;
+        public PythonScript PyScript;
+        public string[] Args = CreatePythonScript();
+
+        public FaceRecognizer()
         {
-            var index = 0;
+            PyScript = new PythonScript(Args);
+            PyTask = new(PyScript.StartProcess);
+        }
 
-            while (index < faceEncodings.Count)
+        private static string[] CreatePythonScript()
+        {
+            string projectPath = Helpers.GetProjectPath();
+            string scriptPath = projectPath + "\\scripts\\face_encoding_and_comparison.py";
+            string databasePath = projectPath + "\\database";
+            string tempPath = projectPath + "\\temp";
+            string[] args = { scriptPath, databasePath, tempPath };
+
+            return args;
+        }
+
+        public void RunPyTask()
+        {
+            PyTask.Start();
+        }
+
+        public void ReloadAndRunPyTask()
+        {
+            PyScript.CreateProcess();
+            PyTask = new(PyScript.StartProcess);
+        }
+
+        public TaskStatus? GetPyTaskStatus()
+        {
+            if (PyTask != null)
             {
-                FaceEncoding encoding = faceEncodings[index];
-                Location faceLocation = faceLocations[index];
-
-                double bestAvgDistance = 1;
-                Person? bestAvgMatchPerson = null;
-
-                double minDistance = 1;
-                Person? minDistancePerson = null;
-
-                foreach (Person person in people)
-                {
-                    IEnumerable<double> distances = FaceRecognition.FaceDistances(person.FaceEncodings, encoding);
-
-                    double avgPersonDistance = distances.Average();
-                    double minPersonDistance = distances.Min();
-
-                    if (avgPersonDistance < bestAvgDistance)
-                    {
-                        bestAvgDistance = avgPersonDistance;
-                        bestAvgMatchPerson = person;
-                    }
-                    if (minPersonDistance < minDistance)
-                    {
-                        minDistance = minPersonDistance;
-                        minDistancePerson = person;
-                    }
-                }
-
-                if (bestAvgMatchPerson != null && minDistancePerson != null)
-                {
-                    if (bestAvgMatchPerson.Equals(minDistancePerson))
-                    {
-                        Console.WriteLine("Best match distance person: " +
-                        bestAvgMatchPerson.Name +
-                        "\nWith average: " + bestAvgDistance +
-                        "\nAnd minimal: " + minDistance +
-                        "\n--------------------------------------------------");
-                    }
-                    else
-                    {
-                        Console.WriteLine("Best average distance match person: " +
-                        bestAvgMatchPerson.Name +
-                        "\nWith average: " + bestAvgDistance +
-                        "\nAnd best minimal distance match person: " +
-                        minDistancePerson.Name +
-                        "\n--------------------------------------------------");
-                    }
-                }
-
-                if (bestAvgMatchPerson != null)
-                {
-                    Drawers.DrawName(mat, bestAvgMatchPerson, faceLocation);
-                }
-
-                index++;
+                return PyTask.Status;
+            }
+            else
+            {
+                return null;
             }
         }
     }

@@ -7,8 +7,8 @@ namespace UltraFaceRecognition
     public class FaceDetector
     {
         public UltraFace? ultraFace;
-        public string binPath = @".\ncnn\data\version-RFB\RFB-320.bin";
-        public string paramPath = @".\ncnn\data\version-RFB\RFB-320.param";
+        public string binPath = Helpers.GetProjectPath()+@"\ncnn\data\version-RFB\RFB-320.bin";
+        public string paramPath = Helpers.GetProjectPath()+@".\ncnn\data\version-RFB\RFB-320.param";
         public UltraFaceParameter? parameter;
 
         public FaceDetector()
@@ -43,7 +43,8 @@ namespace UltraFaceRecognition
 
         public void EnchanceDatabaseImages()
         {
-            string imageDatabaseDir = @".\database\images\";
+            string projectDir = Helpers.GetProjectPath();
+            string imageDatabaseDir = projectDir+@"\database\images\";
 
             string[] peopleImageDBDir = Directory.GetDirectories(imageDatabaseDir);
             foreach (string personImageDBDir in peopleImageDBDir)
@@ -57,7 +58,7 @@ namespace UltraFaceRecognition
                         if (faceInfos != null)
                         {
                             FaceInfo faceInfo = faceInfos[0];
-                            Bitmap bitmap = Helpers.CropImage(personImagePath, faceInfo);
+                            using Bitmap bitmap = Helpers.CropImageFromPath(personImagePath, faceInfo);
                             Helpers.OverwriteImage(bitmap, personImagePath);
                         }
                     }

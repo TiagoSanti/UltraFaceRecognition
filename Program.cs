@@ -5,69 +5,71 @@ namespace UltraFaceRecognition
 {
     public class Program
     {
-        public static int Main()
+        public static void Main()
         {
-            Camera? capture = new();
             FaceDetector detector = new();
-            List<Person> people = new();
-            Encoder encoder = new();
+            Helpers.ClearTemp();
 
+            var watch = System.Diagnostics.Stopwatch.StartNew();
+            DatabaseEncodings(detector);
+            watch.Stop();
+            Console.WriteLine("Time to run DatabaseEncodings(): " + watch.Elapsed.TotalSeconds.ToString());
 
-            //Console.WriteLine("Starting camera");
-            //capture.StartCamera();
-
-            //Console.WriteLine("Start python encoder instance");
-            Encoder.EncodeDatabaseImages();
-
-            //Console.WriteLine("Encode/Load menu");
-            //people = StartEncodings(detector, people);
-
-            //Console.WriteLine("Running recognition");
-            //RunRealTimeRecognizer(capture, people);
-            
-            return 0;
+            RunRealTimeRecognizer();
         }
 
-        public static void RunRealTimeRecognizer(Camera capture, List<Person> people)
+        public static void RunRealTimeRecognizer()
         {
             FaceDetector detector = new();
+            FaceRecognizer faceRecognizer = new();
+            Camera capture = new();
+            capture.StartCamera();
 
+            var watch = System.Diagnostics.Stopwatch.StartNew();
             while (Window.WaitKey(10) != 27)
             {
-                //Console.WriteLine("Getting frame");
-                Mat? mat = capture.GetFrame();
+                using Mat? mat = capture.GetFrame();
                 if (mat != null)
                 {
-                    //Console.WriteLine("Detecting faces");
                     FaceInfo[] faceInfos = detector.DetectFacesMat(mat);
+                    if (faceInfos.Length > 0)
+                    {
+                        IEnumerable<FaceInfo> validFaceInfos = from faceInfo in faceInfos
+                                                               where faceInfo.Score > 0.9
+                                                               select faceInfo;
+                        Drawers.DrawFacesRects(mat, faceInfos);
 
-                    //Console.WriteLine("Drawing rects");
-                    Drawers.DrawFacesRects(mat, faceInfos);
+                        if (watch.Elapsed.TotalSeconds > 5)
+                        {
+                            if (faceRecognizer.GetPyTaskStatus() == TaskStatus.Created)
+                            {
+                                faceRecognizer.RunPyTask();
+                            }
+                            else if (faceRecognizer.GetPyTaskStatus() == TaskStatus.Running)
+                            {
+                                if (!Helpers.ThereIsTemp())
+                                {
+                                    List<Mat> croppedMats = Helpers.BitmapsToMats(Helpers.CropImageFromMat(mat, faceInfos));
+                                    Helpers.SaveTempImage(croppedMats);
+                                }
+                            }
 
-                    //Console.WriteLine("Showing result image");
+                            watch.Restart();
+                        }
+                    }
+
                     capture.ShowImage(mat);
                 }
             }
-
+            watch.Stop();
+            Helpers.ClearTemp();
             Camera.Close();
         }
 
-        public static List<Person> StartEncodings(FaceDetector detector, List<Person> people)
+        public static void DatabaseEncodings(FaceDetector detector)
         {
-            // enchance database images
             detector.EnchanceDatabaseImages();
-
-            // encode database enchanced images
-            Encoder.EncodeDatabaseImages();
-
-            // load encodings
-
-            return people;
-        }
-
-        public void test()
-        {
-
+            Encoder.EncodeDatabase();
         }
     }
 }
