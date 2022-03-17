@@ -137,14 +137,13 @@ namespace UltraFaceRecognition
                 Directory.CreateDirectory(tempPath);
             }
 
-            var i = 0;
+            int i = 0;
             foreach (Mat mat in mats)
             {
-                var fileName = "temp" + i;
+                var fileName = "person_"+i;
                 Cv2.ImWrite(tempPath + fileName + ".png", mat);
                 i++;
             }
-            
         }
         #endregion
 
@@ -157,6 +156,26 @@ namespace UltraFaceRecognition
             current = Directory.GetParent(current).FullName;    // \bin
             current = Directory.GetParent(current).FullName;    // \UltraFaceRecognition
             return current;
+        }
+
+        public static bool ThereIsTemp()
+        {
+            string tempPath = GetProjectPath() + "\\temp";
+            string[] tempImages = Directory.GetFiles(tempPath);
+
+            return tempImages.Length > 0;
+        }
+
+        public static void ClearTemp()
+        {
+            if (ThereIsTemp())
+            {
+                string[] files = Directory.GetFiles(GetProjectPath() + "\\temp");
+                foreach (string file in files)
+                {
+                    File.Delete(file);
+                }
+            }
         }
         #endregion
     }

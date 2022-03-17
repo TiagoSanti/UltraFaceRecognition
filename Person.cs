@@ -1,11 +1,8 @@
-﻿using FaceRecognitionDotNet;
-
-namespace UltraFaceRecognition
+﻿namespace UltraFaceRecognition
 {
-    public class Person
+    public class Person // unused
     {
         public string Name { get; set; }
-        public List<FaceEncoding>? FaceEncodings;
 
         public Person(string name)
         {

@@ -8,8 +8,8 @@ namespace UltraFaceRecognition
         public static void Main()
         {
             FaceDetector detector = new();
+            Helpers.ClearTemp();
 
-            ClearTemp();
             var watch = System.Diagnostics.Stopwatch.StartNew();
             DatabaseEncodings(detector);
             watch.Stop();
@@ -43,12 +43,11 @@ namespace UltraFaceRecognition
                         {
                             if (faceRecognizer.GetPyTaskStatus() == TaskStatus.Created)
                             {
-                                Console.WriteLine(faceRecognizer.GetPyTaskStatus());
                                 faceRecognizer.RunPyTask();
                             }
                             else if (faceRecognizer.GetPyTaskStatus() == TaskStatus.Running)
                             {
-                                if (!ThereIsTemp())
+                                if (!Helpers.ThereIsTemp())
                                 {
                                     List<Mat> croppedMats = Helpers.BitmapsToMats(Helpers.CropImageFromMat(mat, faceInfos));
                                     Helpers.SaveTempImage(croppedMats);
@@ -63,24 +62,8 @@ namespace UltraFaceRecognition
                 }
             }
             watch.Stop();
-            ClearTemp();
+            Helpers.ClearTemp();
             Camera.Close();
-        }
-
-        public static bool ThereIsTemp()
-        {
-            string tempPath = Helpers.GetProjectPath() + "\\temp";
-            string[] tempImages = Directory.GetFiles(tempPath);
-
-            return tempImages.Length > 0;
-        }
-
-        public static void ClearTemp()
-        {
-            if (ThereIsTemp())
-            {
-
-            }
         }
 
         public static void DatabaseEncodings(FaceDetector detector)

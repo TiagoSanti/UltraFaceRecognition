@@ -1,6 +1,6 @@
 import os
 import time
-#os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' #  ignore python imports warnings/errors for presentation
 from ArcFaceAPI import *
 from Person import Person
 
@@ -41,8 +41,9 @@ def load_people_list():
     return people
 
 
-def clear():
-    os.system('cls')
+def delete_temp_images(images_dir, images_path):
+    for image in images_path:
+        os.remove(images_dir+'\\'+image)
 
 
 def main():
@@ -51,9 +52,8 @@ def main():
         images_dir = sys.argv[2]  # csharp execution
     except IndexError:
         print('No temp directory argument found')
-        images_dir = r'C:\Dev\Github\TiagoSanti\UltraFaceRecognition\temp'
+        images_dir = r'C:\Dev\Github\TiagoSanti\UltraFaceRecognition\temp' # isolated script execution
     while True:
-    # for i in range(1):
         start = time.time()
         images_path = np.asarray(os.listdir(images_dir))
         if images_path.size > 0:
@@ -62,7 +62,7 @@ def main():
                 encoding = image_encoding(img)
                 people_distances = {}
                 for person in people:
-                    person_encodings_scores = []  # TODO convert to np.array
+                    person_encodings_scores = []
                     person_encodings = np.asarray(person.encodings)
 
                     for person_encoding in person_encodings:
@@ -77,15 +77,17 @@ def main():
                     person_avg_score = person_encodings_scores.mean()
                     people_distances[f'{person.name}'] = person_avg_score
 
-                best_person = max(people_distances, key=people_distances.get)
-                print(f'------- Best person match for {image_path}: {best_person} -> Score {people_distances.get(best_person)} --------')
-                sys.stdout.flush()
+                    del person_encodings
+                    del person_encodings_scores
 
+                best_person = max(people_distances, key=people_distances.get)
+                print(f'Best person match for {image_path}: {best_person} -> Score {people_distances.get(best_person)}')
+                sys.stdout.flush()
+        
+        delete_temp_images(images_dir, images_path)
         del images_path
-        del person_encodings
-        del person_encodings_scores
-        print(f'Encoding execution time: {time.time() - start} seconds')
-        print('')
+        
+        print(f'Encoding and coparison execution time: {time.time() - start} seconds')
 
         time.sleep(5)
 

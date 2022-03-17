@@ -1,11 +1,8 @@
 import os
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' #  ignore python imports warnings/errors for presentation
 from time import time
 from os import path
-start = time()
 from ArcFaceAPI import *
-end = time()
-print(f'Time to import ArcFaceAPI: {end - start} seconds')
 
 
 def check_if_image_encoding_exists(encodings_files, image_file):
@@ -17,7 +14,7 @@ def main():
         database_path = sys.argv[1]  # csharp execution
     except IndexError:
         print('No directory argument found')
-        database_path = r'C:\Dev\Github\TiagoSanti\UltraFaceRecognition\database'  # only script execution
+        database_path = r'C:\Dev\Github\TiagoSanti\UltraFaceRecognition\database'  # isolated script execution
 
     os.chdir(database_path)
     people_encodings_path = f'{database_path}\\encodings'
@@ -61,5 +58,4 @@ def main():
 
 start = time()
 main()
-end = time()
-print(f'Time to encode database: {end - start} seconds', end="")
+print(f'Time to encode database: {time() - start} seconds', end="")
