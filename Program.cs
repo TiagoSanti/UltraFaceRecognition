@@ -39,7 +39,7 @@ namespace UltraFaceRecognition
                                                                select faceInfo;
                         Drawers.DrawFacesRects(mat, faceInfos);
 
-                        if (watch.Elapsed.TotalSeconds > 5)
+                        if (watch.Elapsed.TotalSeconds > 3)
                         {
                             if (faceRecognizer.GetPyTaskStatus() == TaskStatus.Created)
                             {
