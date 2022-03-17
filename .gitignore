@@ -444,6 +444,10 @@ fabric.properties
 # Android studio 3.1+ serialized cache file
 .idea/caches/build_file_checksums.ser!/database/
 /.idea/discord.xml
+<<<<<<< HEAD
 /log.txt
 /mprofile_20220315110318.dat
 /mprofile_20220315110336.dat
+=======
+/.idea/markdown.xml
+>>>>>>> 6efd6591c16513fba45a770124b006f11ce710e8
