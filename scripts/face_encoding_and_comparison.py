@@ -87,7 +87,7 @@ def main():
         delete_temp_images(images_dir, images_path)
         del images_path
         
-        print(f'Encoding and coparison execution time: {time.time() - start} seconds')
+        print(f'Encoding and comparison execution time: {time.time() - start} seconds')
 
         time.sleep(5)
 
