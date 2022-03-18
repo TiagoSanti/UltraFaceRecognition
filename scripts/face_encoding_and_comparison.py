@@ -1,4 +1,5 @@
 import os
+import sys
 import time
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' #  ignore python imports warnings/errors for presentation
 from ArcFaceAPI import *
@@ -8,11 +9,6 @@ from Person import Person
 def process_and_encode(img):
     img = preprocess(img)
     return image_encoding(img)
-
-
-def get_temp_image(image_path):
-    img = load_image_and_process(image_path)
-    return img
 
 
 def load_people_list():
@@ -46,19 +42,29 @@ def delete_temp_images(images_dir, images_path):
         os.remove(images_dir+'\\'+image)
 
 
+def get_result_dir():
+    dir_parent = os.path.abspath(os.path.join(sys.argv[2], os.pardir))
+    result_dir = dir_parent+'\\results\\'
+
+    if 'results' not in os.listdir(dir_parent):
+        os.mkdir(result_dir)
+
+    return dir_parent+'\\results\\'
+
+
 def main():
     people = load_people_list()
     try:
         images_dir = sys.argv[2]  # csharp execution
     except IndexError:
         print('No temp directory argument found')
-        images_dir = r'C:\Dev\Github\TiagoSanti\UltraFaceRecognition\temp' # isolated script execution
+        images_dir = r'C:\Dev\Github\TiagoSanti\UltraFaceRecognition\temp'  # isolated script execution
     while True:
         start = time.time()
         images_path = np.asarray(os.listdir(images_dir))
         if images_path.size > 0:
             for image_path in images_path:
-                img = get_temp_image(images_dir+'\\'+image_path)
+                img = load_image_and_process(images_dir+'\\'+image_path)
                 encoding = image_encoding(img)
                 people_distances = {}
                 for person in people:
@@ -69,11 +75,8 @@ def main():
                         person_encodings_scores.append(compare_encodings(encoding, person_encoding))
 
                     person_encodings_scores = np.asarray(person_encodings_scores)
-                    # print(f'Distance: {person_encodings_scores}')
                     person_encodings_scores = np.square(person_encodings_scores)
-                    # print(f'Square distance: {person_encodings_scores}')
                     person_encodings_scores = person_encodings_scores**-1
-                    # print(f'Score (1/SD): {person_encodings_scores}\n')
                     person_avg_score = person_encodings_scores.mean()
                     people_distances[f'{person.name}'] = person_avg_score
 
@@ -81,15 +84,17 @@ def main():
                     del person_encodings_scores
 
                 best_person = max(people_distances, key=people_distances.get)
-                print(f'Best person match for {image_path}: {best_person} -> Score {people_distances.get(best_person)}')
+                best_person_score = people_distances.get(best_person)
+                print(f'Best person match: {best_person} -> Score {best_person_score}')
                 sys.stdout.flush()
+                cv2.imwrite(get_result_dir()+f'{best_person}-{best_person_score:.2f}.png', img)
         
         delete_temp_images(images_dir, images_path)
         del images_path
         
         print(f'Encoding and coparison execution time: {time.time() - start} seconds')
 
-        time.sleep(5)
+        time.sleep(3)
 
 
 main()
